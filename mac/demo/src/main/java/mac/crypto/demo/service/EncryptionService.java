@@ -82,4 +82,23 @@ public class EncryptionService {
 
         return new EncryptionResult(decrypted.toString(), steps);
     }
+
+    /**
+     * Generate a random number for roulette using Blum Blum Shub
+     * @param p Prime number p
+     * @param q Prime number q
+     * @param seed Seed value for the generator
+     * @param slots Number of slots in the roulette
+     * @return Random number between 0 and slots-1
+     */
+    public int generateRouletteSpin(BigInteger p, BigInteger q, BigInteger seed, int slots) {
+        BlumBlumShubGenerator generator = new BlumBlumShubGenerator();
+        generator.initialize(p, q, seed);
+        
+        // Generate random bits until we get a number in valid range
+        int bitsNeeded = (int) Math.ceil(Math.log(slots) / Math.log(2));
+        BigInteger randomNum = generator.nextRandom(bitsNeeded);
+        
+        return randomNum.intValue() % slots;
+    }
 }

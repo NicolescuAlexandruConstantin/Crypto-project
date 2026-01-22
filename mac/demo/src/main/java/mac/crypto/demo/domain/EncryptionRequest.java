@@ -1,18 +1,16 @@
 package mac.crypto.demo.domain;
 
-import java.math.BigInteger;
-
 public class EncryptionRequest {
     private String input;
     private String encrypted;
-    private BigInteger p;
-    private BigInteger q;
-    private BigInteger seed;
+    private String p;
+    private String q;
+    private String seed;
 
     public EncryptionRequest() {
     }
 
-    public EncryptionRequest(String input, String encrypted, BigInteger p, BigInteger q, BigInteger seed) {
+    public EncryptionRequest(String input, String encrypted, String p, String q, String seed) {
         this.input = input;
         this.encrypted = encrypted;
         this.p = p;
@@ -36,27 +34,27 @@ public class EncryptionRequest {
         this.encrypted = encrypted;
     }
 
-    public BigInteger getP() {
+    public String getP() {
         return p;
     }
 
-    public void setP(BigInteger p) {
+    public void setP(String p) {
         this.p = p;
     }
 
-    public BigInteger getQ() {
+    public String getQ() {
         return q;
     }
 
-    public void setQ(BigInteger q) {
+    public void setQ(String q) {
         this.q = q;
     }
 
-    public BigInteger getSeed() {
+    public String getSeed() {
         return seed;
     }
 
-    public void setSeed(BigInteger seed) {
+    public void setSeed(String seed) {
         this.seed = seed;
     }
 }

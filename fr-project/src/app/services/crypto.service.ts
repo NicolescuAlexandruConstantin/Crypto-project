@@ -1,64 +1,49 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { EncryptionResult, EncryptionRequest } from '../models/encryption.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CryptoService {
-  constructor() {}
+  private apiUrl = 'http://localhost:8080/api/demo';
+
+  constructor(private http: HttpClient) {}
 
   /**
-   * Encrypts text using a simple Caesar Cipher
-   * Note: This is for demo purposes. Use proper crypto libraries in production.
+   * Encrypts text using Blum Blum Shub generator via backend
    */
-  encrypt(text: string, key: string): string {
-    if (!text || !key) {
-      throw new Error('Text and key are required');
+  encrypt(text: string, p: string, q: string, seed: string): Observable<EncryptionResult> {
+    if (!text || !p || !q || !seed) {
+      throw new Error('Text, P, Q, and Seed are required');
     }
 
-    const shift = this.keyToShift(key);
-    return this.caesarEncrypt(text, shift);
+    const request: EncryptionRequest = {
+      input: text,
+      p: p,
+      q: q,
+      seed: seed
+    };
+
+    return this.http.post<EncryptionResult>(`${this.apiUrl}/encrypt`, request);
   }
 
   /**
-   * Decrypts text using Caesar Cipher
+   * Decrypts text using Blum Blum Shub generator via backend
    */
-  decrypt(text: string, key: string): string {
-    if (!text || !key) {
-      throw new Error('Text and key are required');
+  decrypt(encrypted: string, p: string, q: string, seed: string): Observable<EncryptionResult> {
+    if (!encrypted || !p || !q || !seed) {
+      throw new Error('Encrypted text, P, Q, and Seed are required');
     }
 
-    const shift = this.keyToShift(key);
-    return this.caesarDecrypt(text, shift);
-  }
+    const request: EncryptionRequest = {
+      encrypted: encrypted,
+      p: p,
+      q: q,
+      seed: seed
+    };
 
-  /**
-   * Converts a key string to a shift value
-   */
-  private keyToShift(key: string): number {
-    return key.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % 26;
-  }
-
-  /**
-   * Caesar cipher encryption
-   */
-  private caesarEncrypt(text: string, shift: number): string {
-    return text
-      .split('')
-      .map((char) => {
-        if (char.match(/[a-z]/i)) {
-          const code = char.charCodeAt(0);
-          const base = code >= 65 && code <= 90 ? 65 : 97;
-          return String.fromCharCode(((code - base + shift) % 26) + base);
-        }
-        return char;
-      })
-      .join('');
-  }
-
-  /**
-   * Caesar cipher decryption
-   */
-  private caesarDecrypt(text: string, shift: number): string {
-    return this.caesarEncrypt(text, 26 - shift);
+    return this.http.post<EncryptionResult>(`${this.apiUrl}/decrypt`, request);
   }
 }

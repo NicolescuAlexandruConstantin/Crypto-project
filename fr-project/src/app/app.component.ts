@@ -4,20 +4,22 @@ import { SettingsService } from './services/settings.service';
 import { EncryptionComponent } from './components/encryption/encryption.component';
 import { DecryptionComponent } from './components/decryption/decryption.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { RouletteComponent } from './components/roulette/roulette.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, EncryptionComponent, DecryptionComponent, SettingsComponent],
+  imports: [CommonModule, EncryptionComponent, DecryptionComponent, SettingsComponent, RouletteComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   activeTab: string = 'encryption';
-  tabs = ['encryption', 'decryption', 'settings'];
+  tabs = ['encryption', 'decryption', 'roulette', 'settings'];
   tabLabels = {
     encryption: '🔐 Encryption',
     decryption: '🔓 Decryption',
+    roulette: '🎰 Roulette',
     settings: '⚙️ Settings'
   };
 

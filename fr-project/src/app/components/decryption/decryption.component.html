@@ -12,15 +12,44 @@
       ></textarea>
     </div>
 
-    <div class="input-wrapper">
-      <label for="decrypt-key">Decryption Key</label>
-      <input
-        id="decrypt-key"
-        type="password"
-        [(ngModel)]="decryptKey"
-        name="decryptKey"
-        placeholder="Enter decryption key"
-      />
+    <div class="bbs-params">
+      <h4>Blum Blum Shub Parameters</h4>
+      <div class="param-row">
+        <div class="input-wrapper">
+          <label for="decrypt-p">P (Prime)</label>
+          <input
+            id="decrypt-p"
+            type="number"
+            [(ngModel)]="decryptP"
+            name="decryptP"
+            placeholder="e.g., 61"
+          />
+        </div>
+        <div class="input-wrapper">
+          <label for="decrypt-q">Q (Prime)</label>
+          <input
+            id="decrypt-q"
+            type="number"
+            [(ngModel)]="decryptQ"
+            name="decryptQ"
+            placeholder="e.g., 53"
+          />
+        </div>
+        <div class="input-wrapper">
+          <label for="decrypt-seed">Seed</label>
+          <input
+            id="decrypt-seed"
+            type="number"
+            [(ngModel)]="decryptSeed"
+            name="decryptSeed"
+            placeholder="e.g., 12"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
     </div>
 
     <button type="submit" class="btn btn-primary" [disabled]="isLoading">

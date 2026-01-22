@@ -94,3 +94,35 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+.bbs-params {
+  background: var(--bg-color);
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  border-left: 4px solid var(--secondary-color);
+
+  h4 {
+    margin: 0 0 15px 0;
+    color: var(--secondary-color);
+    font-size: 1rem;
+  }
+
+  .param-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.error-message {
+  padding: 12px 16px;
+  background: var(--danger-color);
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+  animation: slideInUp 0.3s ease;
+}
