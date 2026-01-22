@@ -1,0 +1,44 @@
+<div class="tab-card">
+  <h2>Encryption Tool</h2>
+  <form class="form-group" (ngSubmit)="encrypt()">
+    <div class="input-wrapper">
+      <label for="encrypt-input">Enter Text to Encrypt</label>
+      <textarea
+        id="encrypt-input"
+        [(ngModel)]="encryptInput"
+        name="encryptInput"
+        placeholder="Type your message here..."
+        rows="6"
+      ></textarea>
+    </div>
+
+    <div class="input-wrapper">
+      <label for="encrypt-key">Encryption Key</label>
+      <input
+        id="encrypt-key"
+        type="password"
+        [(ngModel)]="encryptKey"
+        name="encryptKey"
+        placeholder="Enter encryption key"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+      <span *ngIf="!isLoading">🔐 Encrypt</span>
+      <span *ngIf="isLoading">🔄 Processing...</span>
+    </button>
+  </form>
+
+  <div *ngIf="showResult" class="result-box">
+    <h3>Encrypted Result</h3>
+    <div class="output-text">{{ encryptResult }}</div>
+    <div class="result-actions">
+      <button class="btn btn-secondary" (click)="copyToClipboard()">
+        📋 Copy to Clipboard
+      </button>
+      <button class="btn btn-secondary" (click)="clearForm()">
+        🔄 Clear
+      </button>
+    </div>
+  </div>
+</div>

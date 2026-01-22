@@ -1,0 +1,26 @@
+<div class="container">
+  <header class="header">
+    <h1>Crypto Dashboard</h1>
+  </header>
+
+  <div class="tabs-wrapper">
+    <div class="tabs-header">
+      <button
+        *ngFor="let tab of tabs"
+        class="tab-button"
+        [class.active]="isActive(tab)"
+        (click)="switchTab(tab)"
+      >
+        {{ getTabLabel(tab) }}
+      </button>
+    </div>
+
+    <div class="tabs-content">
+      <div>
+        <app-encryption *ngIf="isActive('encryption')"></app-encryption>
+        <app-decryption *ngIf="isActive('decryption')"></app-decryption>
+        <app-settings *ngIf="isActive('settings')"></app-settings>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<div class="tab-card">
+  <h2>Decryption Tool</h2>
+  <form class="form-group" (ngSubmit)="decrypt()">
+    <div class="input-wrapper">
+      <label for="decrypt-input">Enter Text to Decrypt</label>
+      <textarea
+        id="decrypt-input"
+        [(ngModel)]="decryptInput"
+        name="decryptInput"
+        placeholder="Paste encrypted message here..."
+        rows="6"
+      ></textarea>
+    </div>
+
+    <div class="input-wrapper">
+      <label for="decrypt-key">Decryption Key</label>
+      <input
+        id="decrypt-key"
+        type="password"
+        [(ngModel)]="decryptKey"
+        name="decryptKey"
+        placeholder="Enter decryption key"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+      <span *ngIf="!isLoading">🔓 Decrypt</span>
+      <span *ngIf="isLoading">🔄 Processing...</span>
+    </button>
+  </form>
+
+  <div *ngIf="showResult" class="result-box">
+    <h3>Decrypted Result</h3>
+    <div class="output-text">{{ decryptResult }}</div>
+    <div class="result-actions">
+      <button class="btn btn-secondary" (click)="copyToClipboard()">
+        📋 Copy to Clipboard
+      </button>
+      <button class="btn btn-secondary" (click)="clearForm()">
+        🔄 Clear
+      </button>
+    </div>
+  </div>
+</div>

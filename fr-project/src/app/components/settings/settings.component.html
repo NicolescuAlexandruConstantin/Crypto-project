@@ -1,0 +1,42 @@
+<div class="tab-card">
+  <h2>Settings</h2>
+
+  <ng-container *ngIf="settings$ | async as settings">
+    <div class="settings-group">
+      <h3>Encryption Settings</h3>
+      <div class="setting-item">
+        <label>
+          <input
+            type="checkbox"
+            [checked]="settings.autoCopy"
+            #autoCopyInput
+            (change)="updateAutoCopy(autoCopyInput.checked)"
+          />
+          Auto-copy results to clipboard
+        </label>
+      </div>
+      <div class="setting-item">
+        <label>
+          <input
+            type="checkbox"
+            [checked]="settings.showSteps"
+            #showStepsInput
+            (change)="updateShowSteps(showStepsInput.checked)"
+          />
+          Show encryption steps in console
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h3>About</h3>
+      <p><strong>Crypto Dashboard v1.0.0</strong></p>
+      <p>A secure encryption and decryption tool built with Angular.</p>
+      <p style="font-size: 0.85rem; margin-top: 10px; color: var(--text-secondary);">
+        📝 <strong>Note:</strong> The current implementation uses Caesar Cipher for
+        demonstration purposes only. For production use with sensitive data, please
+        integrate proper cryptographic libraries.
+      </p>
+    </div>
+  </ng-container>
+</div>
