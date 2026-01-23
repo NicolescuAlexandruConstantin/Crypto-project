@@ -7,16 +7,12 @@
       <div class="roulette-wheel">
         <div class="wheel-background" [style.transform]="'rotate(' + (state.currentNumber * (360 / slots)) + 'deg)'"></div>
         <div class="wheel-inner" [style.transform]="'rotate(' + (state.currentNumber * (360 / slots)) + 'deg)'">
-          <!-- Triangle segments with borders -->
-          <div *ngFor="let i of getNumbers()" class="triangle-segment" [style.transform]="'rotate(' + (i * (360 / slots)) + 'deg)'">
-          </div>
-          
           <!-- Numbers -->
           <div *ngFor="let i of getNumbers()" 
                class="wheel-number"
                [ngClass]="{ 'selected': state.selectedNumber === i }"
                (click)="!state.isSpinning && selectNumber(i)"
-               [style.transform]="'rotate(' + (i * (360 / slots)) + 'deg) translateY(-145px) rotate(-' + (i * (360 / slots)) + 'deg)'">
+               [style.transform]="'rotate(' + (i * (360 / slots)) + 'deg) translateY(-150px) rotate(-' + (i * (360 / slots)) + 'deg)'">
             {{ i }}
           </div>
         </div>
@@ -28,6 +24,40 @@
       <p class="select-hint" *ngIf="state.selectedNumber === null">
         👆 Click a number to select
       </p>
+
+      <!-- Result Display -->
+      <div class="result-display" *ngIf="state.result !== null">
+        <h4>Last Result</h4>
+        <div class="result-number">{{ state.result }}</div>
+        <div class="result-match" [ngClass]="{ 'win': state.selectedNumber === state.result, 'lose': state.selectedNumber !== state.result }">
+          {{ state.selectedNumber === state.result ? '✓ MATCH!' : '✗ No Match' }}
+        </div>
+        <button class="btn btn-tertiary" (click)="toggleSteps()" [disabled]="rouletteSteps.length === 0" style="margin-top: 12px;">
+          {{ showSteps ? '👁️ Hide Steps' : '👁️ Show Steps' }}
+        </button>
+      </div>
+
+      <!-- Message Display -->
+      <div class="message" [ngClass]="'message-' + messageType" *ngIf="message">
+        {{ message }}
+      </div>
+
+      <!-- Steps Display for Roulette -->
+      <div *ngIf="showSteps && rouletteSteps.length > 0" class="steps-container">
+        <h4>BBS Steps</h4>
+        <div class="steps-table">
+          <div class="steps-header">
+            <div class="step-col">Step (n)</div>
+            <div class="step-col">X(n)</div>
+            <div class="step-col">Bit</div>
+          </div>
+          <div *ngFor="let step of rouletteSteps" class="steps-row">
+            <div class="step-col">{{ step.n }}</div>
+            <div class="step-col">{{ step.xn }}</div>
+            <div class="step-col">{{ step.bit }}</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Controls Section -->
@@ -117,20 +147,6 @@
         >
           🔀 Random Seed
         </button>
-      </div>
-
-      <!-- Message Display -->
-      <div class="message" [ngClass]="'message-' + messageType" *ngIf="message">
-        {{ message }}
-      </div>
-
-      <!-- Result Display -->
-      <div class="result-display" *ngIf="state.result !== null">
-        <h4>Last Result</h4>
-        <div class="result-number">{{ state.result }}</div>
-        <div class="result-match" [ngClass]="{ 'win': state.selectedNumber === state.result, 'lose': state.selectedNumber !== state.result }">
-          {{ state.selectedNumber === state.result ? '✓ MATCH!' : '✗ No Match' }}
-        </div>
       </div>
     </div>
   </div>

@@ -20,6 +20,7 @@ export class DecryptionComponent {
   decryptResult: string = '';
   decryptionSteps: EncryptionStep[] = [];
   showResult: boolean = false;
+  showSteps: boolean = false;
   isLoading: boolean = false;
   errorMessage: string = '';
 
@@ -86,6 +87,11 @@ export class DecryptionComponent {
     this.decryptResult = '';
     this.decryptionSteps = [];
     this.showResult = false;
+    this.showSteps = false;
     this.errorMessage = '';
+  }
+
+  toggleSteps(): void {
+    this.showSteps = !this.showSteps;
   }
 }

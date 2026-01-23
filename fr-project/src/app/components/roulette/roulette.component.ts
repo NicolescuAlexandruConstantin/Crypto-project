@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { EncryptionStep } from '../../models/encryption.model';
 
 interface RouletteState {
   isSpinning: boolean;
@@ -37,6 +38,8 @@ export class RouletteComponent implements OnInit {
   
   message = '';
   messageType: 'success' | 'error' | 'info' = 'info';
+  rouletteSteps: EncryptionStep[] = [];
+  showSteps: boolean = false;
 
   constructor(private http: HttpClient) {}
 
@@ -71,6 +74,7 @@ export class RouletteComponent implements OnInit {
     this.http.post<any>('http://localhost:8080/api/demo/roulette', request)
       .subscribe({
         next: (response) => {
+          this.rouletteSteps = response.steps || [];
           this.animateSpin(response.winningNumber);
         },
         error: () => {
@@ -119,6 +123,8 @@ export class RouletteComponent implements OnInit {
     this.state.currentNumber = 0;
     this.state.selectedNumber = null;
     this.message = '';
+    this.rouletteSteps = [];
+    this.showSteps = false;
   }
 
   selectNumber(number: number): void {
@@ -131,6 +137,10 @@ export class RouletteComponent implements OnInit {
     this.seed = Math.floor(Math.random() * 1000).toString();
     this.message = `Seed changed to ${this.seed}`;
     this.messageType = 'info';
+  }
+
+  toggleSteps(): void {
+    this.showSteps = !this.showSteps;
   }
 
   getNumbers(): number[] {

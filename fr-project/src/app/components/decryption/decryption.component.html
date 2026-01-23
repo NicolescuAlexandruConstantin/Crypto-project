@@ -65,9 +65,29 @@
       <button class="btn btn-secondary" (click)="copyToClipboard()">
         📋 Copy to Clipboard
       </button>
+      <button class="btn btn-secondary" (click)="toggleSteps()" [disabled]="decryptionSteps.length === 0">
+        {{ showSteps ? '👁️ Hide Steps' : '👁️ Show Steps' }}
+      </button>
       <button class="btn btn-secondary" (click)="clearForm()">
         🔄 Clear
       </button>
+    </div>
+
+    <!-- Steps Display -->
+    <div *ngIf="showSteps && decryptionSteps.length > 0" class="steps-container">
+      <h4>BBS Steps</h4>
+      <div class="steps-table">
+        <div class="steps-header">
+          <div class="step-col">Step (n)</div>
+          <div class="step-col">X(n)</div>
+          <div class="step-col">Bit</div>
+        </div>
+        <div *ngFor="let step of decryptionSteps" class="steps-row">
+          <div class="step-col">{{ step.n }}</div>
+          <div class="step-col">{{ step.xn }}</div>
+          <div class="step-col">{{ step.bit }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

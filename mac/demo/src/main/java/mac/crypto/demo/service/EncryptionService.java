@@ -89,16 +89,36 @@ public class EncryptionService {
      * @param q Prime number q
      * @param seed Seed value for the generator
      * @param slots Number of slots in the roulette
-     * @return Random number between 0 and slots-1
+     * @return EncryptionResult containing the random result and BBS steps
      */
-    public int generateRouletteSpin(BigInteger p, BigInteger q, BigInteger seed, int slots) {
+    public EncryptionResult generateRouletteSpin(BigInteger p, BigInteger q, BigInteger seed, int slots) {
         BlumBlumShubGenerator generator = new BlumBlumShubGenerator();
         generator.initialize(p, q, seed);
         
         // Generate random bits until we get a number in valid range
         int bitsNeeded = (int) Math.ceil(Math.log(slots) / Math.log(2));
-        BigInteger randomNum = generator.nextRandom(bitsNeeded);
+        List<EncryptionStep> steps = new ArrayList<>();
+        BigInteger randomNum = null;
+        int result = 0;
         
-        return randomNum.intValue() % slots;
+        // Generate bits and track steps
+        for (int i = 0; i < bitsNeeded; i++) {
+            randomNum = generator.nextRandom(1);
+            int bit = randomNum.intValue();
+            
+            EncryptionStep step = new EncryptionStep(
+                i + 1,
+                randomNum.toString(),
+                bit
+            );
+            steps.add(step);
+        }
+        
+        // Generate the final random number
+        randomNum = generator.nextRandom(bitsNeeded);
+        result = randomNum.intValue() % slots;
+        
+        // Create result with ciphertext as the winning number
+        return new EncryptionResult(String.valueOf(result), steps);
     }
 }
