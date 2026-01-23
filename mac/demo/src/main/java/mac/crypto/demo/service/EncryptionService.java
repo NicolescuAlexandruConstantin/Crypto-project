@@ -6,7 +6,9 @@ import mac.crypto.demo.domain.EncryptionStep;
 import mac.crypto.demo.utils.BlumBlumShubGenerator;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EncryptionService {
@@ -120,5 +122,63 @@ public class EncryptionService {
         
         // Create result with ciphertext as the winning number
         return new EncryptionResult(String.valueOf(result), steps);
+    }
+
+    /**
+     * Shuffle a poker deck using Blum Blum Shub generator with Fisher-Yates algorithm
+     * @param p Prime number p
+     * @param q Prime number q
+     * @param seed Seed value for the generator
+     * @return Map containing shuffled deck and shuffle steps
+     */
+    public Map<String, Object> shufflePokerDeck(BigInteger p, BigInteger q, BigInteger seed) {
+        BlumBlumShubGenerator generator = new BlumBlumShubGenerator();
+        generator.initialize(p, q, seed);
+        
+        // Create deck: 52 cards (13 ranks × 4 suits)
+        String[] suits = {"♠", "♥", "♦", "♣"};
+        String[] ranks = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+        
+        List<String> deck = new ArrayList<>();
+        for (String suit : suits) {
+            for (String rank : ranks) {
+                deck.add(rank + suit);
+            }
+        }
+        
+        // Fisher-Yates shuffle using BBS random numbers
+        List<EncryptionStep> steps = new ArrayList<>();
+        int stepNum = 0;
+        
+        for (int i = deck.size() - 1; i > 0; i--) {
+            // Generate random index between 0 and i
+            int bitsNeeded = (int) Math.ceil(Math.log(i + 1) / Math.log(2));
+            BigInteger randomNum = generator.nextRandom(bitsNeeded);
+            int randomIndex = randomNum.intValue() % (i + 1);
+            
+            // Record the shuffle step
+            EncryptionStep step = new EncryptionStep(
+                stepNum + 1,
+                randomNum.toString(),
+                randomIndex
+            );
+            steps.add(step);
+            stepNum++;
+            
+            // Swap cards
+            String temp = deck.get(i);
+            deck.set(i, deck.get(randomIndex));
+            deck.set(randomIndex, temp);
+        }
+        
+        // Prepare response
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("shuffledDeck", deck);
+        response.put("cardCount", deck.size());
+        response.put("steps", steps);
+        response.put("message", "Deck shuffled successfully with " + steps.size() + " random swaps");
+        
+        return response;
     }
 }

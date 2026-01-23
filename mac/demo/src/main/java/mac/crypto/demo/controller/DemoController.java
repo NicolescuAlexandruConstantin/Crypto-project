@@ -68,4 +68,18 @@ public class DemoController {
         
         return response;
     }
+
+    @PostMapping("/shuffle-deck")
+    public Map<String, Object> shuffleDeck(@RequestBody Map<String, Object> request) {
+        logger.info("Received shuffle deck request with p: {}, q: {}, seed: {}", request.get("p"), request.get("q"), request.get("seed"));
+        BigInteger p = new BigInteger(request.get("p").toString());
+        BigInteger q = new BigInteger(request.get("q").toString());
+        BigInteger seed = new BigInteger(request.get("seed").toString());
+
+        // Shuffle deck using Blum Blum Shub
+        Map<String, Object> result = encryptionService.shufflePokerDeck(p, q, seed);
+        logger.info("Deck shuffled successfully");
+        
+        return result;
+    }
 }

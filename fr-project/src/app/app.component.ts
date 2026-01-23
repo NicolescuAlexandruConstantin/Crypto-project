@@ -5,21 +5,23 @@ import { EncryptionComponent } from './components/encryption/encryption.componen
 import { DecryptionComponent } from './components/decryption/decryption.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { RouletteComponent } from './components/roulette/roulette.component';
+import { CardShuffleComponent } from './components/card-shuffle/card-shuffle.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, EncryptionComponent, DecryptionComponent, SettingsComponent, RouletteComponent],
+  imports: [CommonModule, EncryptionComponent, DecryptionComponent, SettingsComponent, RouletteComponent, CardShuffleComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   activeTab: string = 'encryption';
-  tabs = ['encryption', 'decryption', 'roulette', 'settings'];
+  tabs = ['encryption', 'decryption', 'roulette', 'card-shuffle', 'settings'];
   tabLabels = {
     encryption: '🔐 Encryption',
     decryption: '🔓 Decryption',
     roulette: '🎰 Roulette',
+    'card-shuffle': '🂡 Card Shuffle',
     settings: '⚙️ Settings'
   };
 

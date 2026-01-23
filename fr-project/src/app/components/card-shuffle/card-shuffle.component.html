@@ -1,0 +1,136 @@
+<div class="tab-card">
+  <h2>Poker Card Shuffle 🂡</h2>
+
+  <div class="shuffle-container">
+    <!-- Parameters Section -->
+    <div class="params-section">
+      <h3>Shuffle Parameters</h3>
+      
+      <div class="input-group">
+        <label for="p-input">P (Prime)</label>
+        <input
+          type="number"
+          id="p-input"
+          [(ngModel)]="p"
+          [disabled]="isShuffling"
+          placeholder="e.g., 61"
+        />
+      </div>
+
+      <div class="input-group">
+        <label for="q-input">Q (Prime)</label>
+        <input
+          type="number"
+          id="q-input"
+          [(ngModel)]="q"
+          [disabled]="isShuffling"
+          placeholder="e.g., 53"
+        />
+      </div>
+
+      <div class="input-group">
+        <label for="seed-input">Seed</label>
+        <input
+          type="number"
+          id="seed-input"
+          [(ngModel)]="seed"
+          [disabled]="isShuffling"
+          placeholder="e.g., 12"
+        />
+      </div>
+
+      <div class="button-group">
+        <button class="btn btn-primary" (click)="shuffleDeck()" [disabled]="isShuffling">
+          {{ isShuffling ? '🔄 Shuffling...' : '🔀 Shuffle Deck' }}
+        </button>
+        <button class="btn btn-secondary" (click)="changeSeed()" [disabled]="isShuffling">
+          🎲 Random Seed
+        </button>
+        <button class="btn btn-secondary" (click)="resetDeck()" [disabled]="isShuffling">
+          ↺ Reset Deck
+        </button>
+      </div>
+
+      <div *ngIf="message" class="message" [ngClass]="'message-' + messageType">
+        {{ message }}
+      </div>
+    </div>
+
+    <!-- Deck Display Section -->
+    <div class="deck-section">
+      <div class="original-deck">
+        <h4>Original Deck (52 cards)</h4>
+        <div class="cards-display">
+          <div *ngFor="let card of deck" class="card">
+            <span class="card-symbol" [ngClass]="'suit-' + (card.suit === '♥' || card.suit === '♦' ? 'red' : 'black')">
+              {{ card.symbol }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="showShuffledDeck" class="shuffled-deck">
+        <h4>Shuffled Deck ({{ shuffledDeck.length }} cards remaining)</h4>
+        <div class="cards-display">
+          <div *ngFor="let card of shuffledDeck" class="card">
+            <span class="card-symbol" [ngClass]="'suit-' + (card.suit === '♥' || card.suit === '♦' ? 'red' : 'black')">
+              {{ card.symbol }}
+            </span>
+          </div>
+        </div>
+
+        <div class="draw-buttons">
+          <button class="btn btn-tertiary" (click)="drawCards(1)">Draw 1 Card</button>
+          <button class="btn btn-tertiary" (click)="drawCards(5)">Draw 5 Cards (Hand)</button>
+          <button class="btn btn-tertiary" (click)="drawCards(7)">Draw 7 Cards</button>
+          <button class="btn btn-tertiary" (click)="toggleHands()" [disabled]="drawnHands.length === 0">
+            {{ showHands ? '👁️ Hide Hands' : '👁️ Show Hands' }}
+          </button>
+          <button class="btn btn-tertiary" (click)="resetDeck()">New Shuffle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hands Modal/Pop-up -->
+  <div *ngIf="showHands" class="hands-modal-overlay" (click)="toggleHands()">
+    <div class="hands-modal" (click)="$event.stopPropagation()">
+      <div class="hands-header">
+        <h3>Your Hands ({{ drawnHands.length }} hand{{ drawnHands.length !== 1 ? 's' : '' }})</h3>
+        <button class="close-btn" (click)="toggleHands()">✕</button>
+      </div>
+      
+      <div class="hands-content">
+        <div class="hands-display">
+          <div *ngFor="let hand of drawnHands; let i = index" class="single-hand">
+            <div class="hand-label">Hand {{ i + 1 }} ({{ hand.length }} cards)</div>
+            <div class="hands-cards">
+              <div *ngFor="let card of hand" class="hand-card">
+                <div class="hand-card-face">
+                  <span class="hand-card-symbol" [ngClass]="'suit-' + (card.suit === '♥' || card.suit === '♦' ? 'red' : 'black')">
+                    {{ card.symbol }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hands-footer">
+        <button class="btn btn-secondary" (click)="clearHands()">Clear Hand</button>
+        <button class="btn btn-primary" (click)="toggleHands()">Close</button>
+      </div>
+    </div>
+  </div>
+  <div class="info-section">
+    <h3>How It Works</h3>
+    <ul>
+      <li>🔐 Uses Blum Blum Shub generator for cryptographically secure shuffling</li>
+      <li>🎴 Implements Fisher-Yates shuffle algorithm</li>
+      <li>⚙️ Customize P, Q, and Seed for different shuffle sequences</li>
+      <li>🂡 Perfect for poker simulation and fair card distribution</li>
+      <li>📊 All shuffles are reproducible with the same parameters</li>
+    </ul>
+  </div>
+</div>
