@@ -5,14 +5,14 @@
     <!-- Roulette Wheel -->
     <div class="wheel-section">
       <div class="roulette-wheel">
-        <div class="wheel-background" [style.transform]="'rotate(' + (state.currentNumber * (360 / slots)) + 'deg)'"></div>
-        <div class="wheel-inner" [style.transform]="'rotate(' + (state.currentNumber * (360 / slots)) + 'deg)'">
+        <div class="wheel-background" [style.transform]="'rotate(' + (-(state.currentNumber * (360 / slots) + (360 / (2 * slots)))) + 'deg)'"></div>
+        <div class="wheel-inner" [style.transform]="'rotate(' + (-(state.currentNumber * (360 / slots) + (360 / (2 * slots)))) + 'deg)'">
           <!-- Numbers -->
           <div *ngFor="let i of getNumbers()" 
                class="wheel-number"
                [ngClass]="{ 'selected': state.selectedNumber === i }"
                (click)="!state.isSpinning && selectNumber(i)"
-               [style.transform]="'rotate(' + (i * (360 / slots)) + 'deg) translateY(-150px) rotate(-' + (i * (360 / slots)) + 'deg)'">
+               [style.transform]="'rotate(' + ((i * (360 / slots)) + (360 / (2 * slots))) + 'deg) translateY(-175px) rotate(-' + ((i * (360 / slots)) + (360 / (2 * slots))) + 'deg)'">
             {{ i }}
           </div>
         </div>
@@ -155,7 +155,7 @@
   <div class="rules-section">
     <h3>Game Rules</h3>
     <ul>
-      <li>🎲 Click on a number (0-35) to select your bet</li>
+      <li>🎲 Click on a number (0-19) to select your bet</li>
       <li>💰 Set your bet amount (you win 36x your bet if correct)</li>
       <li>🔐 Numbers generated using Blum Blum Shub cryptographic generator</li>
       <li>📊 Adjust P, Q, and Seed for different random sequences</li>

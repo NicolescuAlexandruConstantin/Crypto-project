@@ -94,6 +94,8 @@ export class RouletteComponent implements OnInit {
 
       if (rotations > maxRotations) {
         clearInterval(interval);
+        // Set to winning number to align with pointer
+        this.state.currentNumber = winningNumber;
         this.state.result = winningNumber;
         this.state.isSpinning = false;
         this.evaluateResult(winningNumber);
