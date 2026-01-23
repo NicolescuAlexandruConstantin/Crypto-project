@@ -25,10 +25,8 @@
   gap: 2rem;
   margin: 2rem 0;
   flex-wrap: wrap;
-
   @media (max-width: 1024px) {
     flex-direction: column;
-    gap: 2rem;
   }
 }
 
@@ -38,7 +36,6 @@
   padding: 1.5rem;
   border-radius: 12px;
   border: 2px solid var(--border-color);
-  transition: var(--transition);
 
   &:hover {
     border-color: var(--primary-color);
@@ -48,7 +45,6 @@
   h3 {
     margin: 0 0 1.5rem 0;
     font-size: 1.2rem;
-    color: var(--text-primary);
   }
 }
 
@@ -60,7 +56,6 @@
 
   label {
     font-weight: 600;
-    color: var(--text-primary);
     font-size: 0.95rem;
   }
 
@@ -70,19 +65,6 @@
     border-radius: 8px;
     background: var(--bg-color);
     color: var(--text-primary);
-    font-size: 0.95rem;
-    transition: var(--transition);
-
-    &:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
   }
 }
 
@@ -121,8 +103,7 @@
   min-width: 300px;
 }
 
-.original-deck,
-.shuffled-deck {
+.original-deck, .shuffled-deck {
   background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 12px;
@@ -147,12 +128,6 @@
   min-height: 150px;
   max-height: 400px;
   overflow-y: auto;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-    gap: 0.3rem;
-    max-height: 200px;
-  }
 }
 
 .card {
@@ -164,7 +139,6 @@
   border: 2px solid var(--border-color);
   border-radius: 6px;
   aspect-ratio: 1;
-  cursor: pointer;
   transition: var(--transition);
 
   &:hover {
@@ -176,7 +150,6 @@
 .card-symbol {
   font-weight: bold;
   font-size: 1.1rem;
-  user-select: none;
 
   &.suit-red {
     color: #ef4444;
@@ -194,7 +167,6 @@
   margin-top: 1rem;
 }
 
-/* Info Section */
 .info-section {
   background: var(--bg-color);
   padding: 1.5rem;
@@ -203,7 +175,6 @@
   margin-top: 2rem;
 
   h3 {
-    margin: 0 0 1rem 0;
     color: var(--primary-color);
     font-size: 1.1rem;
   }
@@ -211,13 +182,11 @@
   ul {
     list-style: none;
     padding: 0;
-    margin: 0;
 
     li {
       padding: 0.75rem 0;
       padding-left: 1.5rem;
       position: relative;
-      color: var(--text-secondary);
       line-height: 1.8;
 
       &:before {
@@ -231,7 +200,7 @@
   }
 }
 
-/* Animations */
+/* Modal and Animations */
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -243,7 +212,6 @@
   }
 }
 
-/* Hands Modal Styles */
 .hands-modal-overlay {
   position: fixed;
   top: 0;
@@ -255,7 +223,6 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease;
 }
 
 .hands-modal {
@@ -268,13 +235,7 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  animation: slideInUp 0.3s ease;
   position: relative;
-
-  @media (max-width: 768px) {
-    width: 95%;
-    max-height: 85vh;
-  }
 }
 
 .hands-header {
@@ -287,7 +248,6 @@
   h3 {
     margin: 0;
     font-size: 1.3rem;
-    color: var(--text-primary);
   }
 }
 
@@ -295,15 +255,7 @@
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: var(--text-secondary);
   cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
 
   &:hover {
     color: var(--danger-color);
@@ -337,7 +289,6 @@
 .hand-label {
   font-weight: 600;
   color: var(--primary-color);
-  font-size: 1rem;
 }
 
 .hands-cards {
@@ -345,15 +296,6 @@
   gap: 1.5rem;
   flex-wrap: nowrap;
   justify-content: flex-start;
-  align-items: flex-start;
-
-  @media (max-width: 768px) {
-    gap: 1rem;
-  }
-}
-
-.hand-card {
-  perspective: 1000px;
 }
 
 .hand-card-face {
@@ -368,25 +310,15 @@
   justify-content: center;
   padding: 0.5rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: var(--transition);
-  flex-shrink: 0;
 
   &:hover {
     transform: translateY(-10px) scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    width: 80px;
-    height: 110px;
-    padding: 0.3rem;
   }
 }
 
 .hand-card-symbol {
   font-weight: bold;
   font-size: 2rem;
-  user-select: none;
 
   &.suit-red {
     color: #ef4444;
@@ -394,10 +326,6 @@
 
   &.suit-black {
     color: #1e293b;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
   }
 }
 
@@ -407,17 +335,24 @@
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+}
 
-  button {
-    min-width: 120px;
+/* ERROR HANDLING STYLES ADDED */
+@keyframes brutal-shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.shake-animation {
+  animation: brutal-shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
 }

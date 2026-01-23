@@ -9,6 +9,7 @@
         name="decryptInput"
         placeholder="Paste encrypted message here..."
         rows="6"
+        [disabled]="isLoading"
       ></textarea>
     </div>
 
@@ -17,38 +18,20 @@
       <div class="param-row">
         <div class="input-wrapper">
           <label for="decrypt-p">P (Prime)</label>
-          <input
-            id="decrypt-p"
-            type="number"
-            [(ngModel)]="decryptP"
-            name="decryptP"
-            placeholder="e.g., 61"
-          />
+          <input id="decrypt-p" type="number" [(ngModel)]="decryptP" name="decryptP" [disabled]="isLoading" />
         </div>
         <div class="input-wrapper">
           <label for="decrypt-q">Q (Prime)</label>
-          <input
-            id="decrypt-q"
-            type="number"
-            [(ngModel)]="decryptQ"
-            name="decryptQ"
-            placeholder="e.g., 53"
-          />
+          <input id="decrypt-q" type="number" [(ngModel)]="decryptQ" name="decryptQ" [disabled]="isLoading" />
         </div>
         <div class="input-wrapper">
           <label for="decrypt-seed">Seed</label>
-          <input
-            id="decrypt-seed"
-            type="number"
-            [(ngModel)]="decryptSeed"
-            name="decryptSeed"
-            placeholder="e.g., 12"
-          />
+          <input id="decrypt-seed" type="number" [(ngModel)]="decryptSeed" name="decryptSeed" [disabled]="isLoading" />
         </div>
       </div>
     </div>
 
-    <div *ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage" class="error-message" [class.shake-animation]="isShaking">
       {{ errorMessage }}
     </div>
 
@@ -58,22 +41,17 @@
     </button>
   </form>
 
-  <div *ngIf="showResult" class="result-box">
+  <div *ngIf="showResult && !isLoading" class="result-box">
     <h3>Decrypted Result</h3>
     <div class="output-text">{{ decryptResult }}</div>
     <div class="result-actions">
-      <button class="btn btn-secondary" (click)="copyToClipboard()">
-        📋 Copy to Clipboard
-      </button>
+      <button class="btn btn-secondary" (click)="copyToClipboard()">📋 Copy</button>
       <button class="btn btn-secondary" (click)="toggleSteps()" [disabled]="decryptionSteps.length === 0">
         {{ showSteps ? '👁️ Hide Steps' : '👁️ Show Steps' }}
       </button>
-      <button class="btn btn-secondary" (click)="clearForm()">
-        🔄 Clear
-      </button>
+      <button class="btn btn-secondary" (click)="clearForm()">🔄 Clear</button>
     </div>
 
-    <!-- Steps Display -->
     <div *ngIf="showSteps && decryptionSteps.length > 0" class="steps-container">
       <h4>BBS Steps</h4>
       <div class="steps-table">

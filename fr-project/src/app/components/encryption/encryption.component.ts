@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 import { CryptoService } from '../../services/crypto.service';
 import { SettingsService } from '../../services/settings.service';
 import { EncryptionResult, EncryptionStep } from '../../models/encryption.model';
@@ -19,61 +20,90 @@ export class EncryptionComponent {
   encryptSeed: string = '12';
   encryptResult: string = '';
   encryptionSteps: EncryptionStep[] = [];
+
   showResult: boolean = false;
   showSteps: boolean = false;
   isLoading: boolean = false;
   errorMessage: string = '';
+  isShaking: boolean = false;
 
   constructor(
     private cryptoService: CryptoService,
     private settingsService: SettingsService
   ) {}
 
+  private isPrime(num: number): boolean {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 === 0 || num % 3 === 0) return false;
+    for (let i = 5; i * i <= num; i += 6) {
+      if (num % i === 0 || num % (i + 2) === 0) return false;
+    }
+    return true;
+  }
+
+  private triggerShake(msg: string): void {
+    this.errorMessage = msg;
+    this.isShaking = true;
+    setTimeout(() => {
+      this.isShaking = false;
+    }, 500);
+  }
+
   encrypt(): void {
-    if (!this.encryptInput.trim() || !this.encryptP.trim() || !this.encryptQ.trim() || !this.encryptSeed.trim()) {
-      this.errorMessage = '❌ Please enter text, P, Q, and Seed values';
+    this.errorMessage = '';
+    this.showResult = false;
+
+    const pStr = String(this.encryptP).trim();
+    const qStr = String(this.encryptQ).trim();
+    const sStr = String(this.encryptSeed).trim();
+
+    if (!this.encryptInput.trim() || !pStr || !qStr || !sStr) {
+      this.triggerShake('❌ Please fill in all fields.');
       return;
     }
 
-    try {
-      this.isLoading = true;
-      this.errorMessage = '';
-      this.cryptoService.encrypt(
-        this.encryptInput,
-        this.encryptP,
-        this.encryptQ,
-        this.encryptSeed
-      ).subscribe({
+    const pVal = Number(pStr);
+    const qVal = Number(qStr);
+
+    if (isNaN(pVal) || isNaN(qVal)) {
+      this.triggerShake('❌ P and Q must be valid numbers.');
+      return;
+    }
+
+    if (!this.isPrime(pVal) || !this.isPrime(qVal)) {
+      this.triggerShake('❌ Security Risk: Both P and Q must be prime numbers.');
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.cryptoService.encrypt(this.encryptInput, pStr, qStr, sStr)
+      .pipe(
+        finalize(() => {
+          setTimeout(() => this.isLoading = false, 100);
+        })
+      )
+      .subscribe({
         next: (response: EncryptionResult) => {
           this.encryptResult = response.ciphertextHex;
+          // Ensure this line correctly maps 'steps' from your backend response
           this.encryptionSteps = response.steps || [];
           this.showResult = true;
-          this.isLoading = false;
 
           if (this.settingsService.getSetting('autoCopy')) {
             this.copyToClipboard();
           }
-
-          if (this.settingsService.getSetting('showSteps')) {
-            console.log(
-              `[Encryption] Encrypted ${this.encryptInput.length} characters`,
-              response
-            );
-          }
         },
         error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = `❌ Encryption failed: ${error.message || 'Unknown error'}`;
-          console.error('Encryption error:', error);
+          const errorMsg = error.error?.message || error.message || 'Server Error';
+          this.triggerShake(`❌ Encryption failed: ${errorMsg}`);
         }
       });
-    } catch (error) {
-      this.isLoading = false;
-      this.errorMessage = `❌ ${error instanceof Error ? error.message : 'Encryption failed'}`;
-    }
   }
 
   copyToClipboard(): void {
+    if (!this.encryptResult) return;
     navigator.clipboard.writeText(this.encryptResult).then(() => {
       console.log('✅ Copied to clipboard!');
     });
@@ -89,6 +119,7 @@ export class EncryptionComponent {
     this.showResult = false;
     this.showSteps = false;
     this.errorMessage = '';
+    this.isLoading = false;
   }
 
   toggleSteps(): void {

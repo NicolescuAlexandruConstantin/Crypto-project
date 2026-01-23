@@ -1,14 +1,12 @@
 <div class="tab-card">
   <h2>Roulette Game 🎰</h2>
-  
+
   <div class="roulette-container">
-    <!-- Roulette Wheel -->
     <div class="wheel-section">
       <div class="roulette-wheel">
-        <div class="wheel-background" [style.transform]="'rotate(' + (-(state.currentNumber * (360 / slots) + (360 / (2 * slots)))) + 'deg)'"></div>
-        <div class="wheel-inner" [style.transform]="'rotate(' + (-(state.currentNumber * (360 / slots) + (360 / (2 * slots)))) + 'deg)'">
-          <!-- Numbers -->
-          <div *ngFor="let i of getNumbers()" 
+        <div class="wheel-background" [style.transform]="'rotate(' + state.wheelRotation + 'deg)'"></div>
+        <div class="wheel-inner" [style.transform]="'rotate(' + state.wheelRotation + 'deg)'">
+          <div *ngFor="let i of getNumbers()"
                class="wheel-number"
                [ngClass]="{ 'selected': state.selectedNumber === i }"
                (click)="!state.isSpinning && selectNumber(i)"
@@ -18,6 +16,7 @@
         </div>
         <div class="wheel-pointer"></div>
       </div>
+
       <p class="selected-number" *ngIf="state.selectedNumber !== null">
         ✓ Selected: <strong>{{ state.selectedNumber }}</strong>
       </p>
@@ -25,7 +24,6 @@
         👆 Click a number to select
       </p>
 
-      <!-- Result Display -->
       <div class="result-display" *ngIf="state.result !== null">
         <h4>Last Result</h4>
         <div class="result-number">{{ state.result }}</div>
@@ -37,12 +35,10 @@
         </button>
       </div>
 
-      <!-- Message Display -->
-      <div class="message" [ngClass]="'message-' + messageType" *ngIf="message">
+      <div class="message" [ngClass]="'message-' + messageType" [class.shake-animation]="isShaking" *ngIf="message">
         {{ message }}
       </div>
 
-      <!-- Steps Display for Roulette -->
       <div *ngIf="showSteps && rouletteSteps.length > 0" class="steps-container">
         <h4>BBS Steps</h4>
         <div class="steps-table">
@@ -60,98 +56,48 @@
       </div>
     </div>
 
-    <!-- Controls Section -->
     <div class="controls-section">
       <div class="control-group">
         <h3>Game Controls</h3>
-        
         <div class="input-group">
           <label>Balance</label>
           <div class="balance-display">💰 ${{ state.balance }}</div>
         </div>
-
         <div class="input-group">
           <label for="bet-input">Bet Amount</label>
-          <input
-            type="number"
-            id="bet-input"
-            [(ngModel)]="state.bet"
-            min="1"
-            [max]="state.balance"
-            [disabled]="state.isSpinning"
-          />
+          <input type="number" id="bet-input" [(ngModel)]="state.bet" min="1" [max]="state.balance" [disabled]="state.isSpinning" />
         </div>
-
         <div class="input-group">
           <label>Selected Number</label>
           <div class="selected-display" [ngClass]="{ 'has-selection': state.selectedNumber !== null }">
             {{ state.selectedNumber !== null ? state.selectedNumber : 'None' }}
           </div>
         </div>
-
-        <button
-          class="btn btn-primary spin-button"
-          (click)="spinRoulette()"
-          [disabled]="state.isSpinning || state.balance <= 0 || state.selectedNumber === null"
-        >
+        <button class="btn btn-primary spin-button" (click)="spinRoulette()" [disabled]="state.isSpinning || state.balance <= 0 || state.selectedNumber === null">
           {{ state.isSpinning ? '🔄 Spinning...' : '🎯 SPIN!' }}
         </button>
-
-        <button
-          class="btn btn-secondary reset-button"
-          (click)="resetGame()"
-          [disabled]="state.isSpinning"
-        >
-          💫 Reset Game
-        </button>
+        <button class="btn btn-secondary reset-button" (click)="resetGame()" [disabled]="state.isSpinning">💫 Reset Game</button>
       </div>
 
-      <!-- BBS Parameters -->
       <div class="control-group">
         <h3>Blum Blum Shub Parameters</h3>
-        
         <div class="input-group">
           <label for="p-input">P (Prime)</label>
-          <input
-            type="number"
-            id="p-input"
-            [(ngModel)]="p"
-            [disabled]="state.isSpinning"
-          />
+          <input type="number" id="p-input" [(ngModel)]="p" [disabled]="state.isSpinning" />
         </div>
-
         <div class="input-group">
           <label for="q-input">Q (Prime)</label>
-          <input
-            type="number"
-            id="q-input"
-            [(ngModel)]="q"
-            [disabled]="state.isSpinning"
-          />
+          <input type="number" id="q-input" [(ngModel)]="q" [disabled]="state.isSpinning" />
         </div>
-
         <div class="input-group">
           <label for="seed-input">Seed</label>
-          <input
-            type="number"
-            id="seed-input"
-            [(ngModel)]="seed"
-            [disabled]="state.isSpinning"
-          />
+          <input type="number" id="seed-input" [(ngModel)]="seed" [disabled]="state.isSpinning" />
         </div>
-
-        <button
-          class="btn btn-secondary"
-          (click)="changeSeed()"
-          [disabled]="state.isSpinning"
-        >
-          🔀 Random Seed
-        </button>
+        <button class="btn btn-secondary" (click)="changeSeed()" [disabled]="state.isSpinning">🔀 Random Seed</button>
       </div>
     </div>
   </div>
 
-  <!-- Game Rules -->
   <div class="rules-section">
     <h3>Game Rules</h3>
     <ul>
@@ -159,8 +105,6 @@
       <li>💰 Set your bet amount (you win 36x your bet if correct)</li>
       <li>🔐 Numbers generated using Blum Blum Shub cryptographic generator</li>
       <li>📊 Adjust P, Q, and Seed for different random sequences</li>
-      <li>🎯 Win by correctly guessing the spinning number</li>
-      <li>🎉 Game ends when balance reaches $0</li>
     </ul>
   </div>
 </div>

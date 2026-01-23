@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 import { CryptoService } from '../../services/crypto.service';
 import { SettingsService } from '../../services/settings.service';
 import { EncryptionResult, EncryptionStep } from '../../models/encryption.model';
@@ -19,63 +20,100 @@ export class DecryptionComponent {
   decryptSeed: string = '12';
   decryptResult: string = '';
   decryptionSteps: EncryptionStep[] = [];
+
   showResult: boolean = false;
   showSteps: boolean = false;
   isLoading: boolean = false;
   errorMessage: string = '';
+  isShaking: boolean = false;
 
   constructor(
     private cryptoService: CryptoService,
     private settingsService: SettingsService
   ) {}
 
+  private isPrime(num: number): boolean {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 === 0 || num % 3 === 0) return false;
+    for (let i = 5; i * i <= num; i += 6) {
+      if (num % i === 0 || num % (i + 2) === 0) return false;
+    }
+    return true;
+  }
+
+  private triggerShake(msg: string): void {
+    this.errorMessage = msg;
+    this.isShaking = true;
+    setTimeout(() => {
+      this.isShaking = false;
+    }, 500);
+  }
+
   decrypt(): void {
-    if (!this.decryptInput.trim() || !this.decryptP.trim() || !this.decryptQ.trim() || !this.decryptSeed.trim()) {
-      this.errorMessage = '❌ Please enter encrypted text, P, Q, and Seed values';
+    // Reset basic UI state
+    this.errorMessage = '';
+    this.showResult = false;
+
+    // 1. Sanitize and Validate Inputs
+    const pStr = String(this.decryptP).trim();
+    const qStr = String(this.decryptQ).trim();
+    const sStr = String(this.decryptSeed).trim();
+
+    if (!this.decryptInput.trim() || !pStr || !qStr || !sStr) {
+      this.triggerShake('❌ Please enter encrypted text, P, Q, and Seed values');
       return;
     }
 
-    try {
-      this.isLoading = true;
-      this.errorMessage = '';
-      this.cryptoService.decrypt(
-        this.decryptInput,
-        this.decryptP,
-        this.decryptQ,
-        this.decryptSeed
-      ).subscribe({
-        next: (response: EncryptionResult) => {
-          this.decryptResult = response.ciphertextHex;
-          this.decryptionSteps = response.steps || [];
-          this.showResult = true;
-          this.isLoading = false;
+    const pVal = Number(pStr);
+    const qVal = Number(qStr);
+    const seedVal = Number(sStr);
 
-          if (this.settingsService.getSetting('autoCopy')) {
-            this.copyToClipboard();
-          }
-
-          if (this.settingsService.getSetting('showSteps')) {
-            console.log(
-              `[Decryption] Decrypted ${this.decryptInput.length} characters`,
-              response
-            );
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = `❌ Decryption failed: ${error.message || 'Unknown error'}`;
-          console.error('Decryption error:', error);
-        }
-      });
-    } catch (error) {
-      this.isLoading = false;
-      this.errorMessage = `❌ ${error instanceof Error ? error.message : 'Decryption failed'}`;
+    if (isNaN(pVal) || isNaN(qVal) || isNaN(seedVal)) {
+      this.triggerShake('❌ P, Q, and Seed must be valid numbers');
+      return;
     }
+
+    if (!this.isPrime(pVal) || !this.isPrime(qVal)) {
+      this.triggerShake('❌ Security Risk: Both P and Q must be prime numbers');
+      return;
+    }
+
+    // 2. Execution
+    this.isLoading = true;
+
+    this.cryptoService.decrypt(
+      this.decryptInput,
+      pStr,
+      qStr,
+      sStr
+    ).pipe(
+      finalize(() => {
+        // Small delay to ensure Angular catches the state change
+        setTimeout(() => this.isLoading = false, 100);
+      })
+    ).subscribe({
+      next: (response: EncryptionResult) => {
+        this.decryptResult = response.ciphertextHex;
+        this.decryptionSteps = response.steps || [];
+        this.showResult = true;
+
+        if (this.settingsService.getSetting('autoCopy')) {
+          this.copyToClipboard();
+        }
+      },
+      error: (error) => {
+        const errorMsg = error.error?.message || error.message || 'Unknown server error';
+        this.triggerShake(`❌ Decryption failed: ${errorMsg}`);
+        console.error('Decryption error:', error);
+      }
+    });
   }
 
   copyToClipboard(): void {
+    if (!this.decryptResult) return;
     navigator.clipboard.writeText(this.decryptResult).then(() => {
-      console.log('✅ Copied to clipboard!');
+      console.log('✅ Decrypted text copied!');
     });
   }
 
@@ -89,6 +127,7 @@ export class DecryptionComponent {
     this.showResult = false;
     this.showSteps = false;
     this.errorMessage = '';
+    this.isLoading = false;
   }
 
   toggleSteps(): void {

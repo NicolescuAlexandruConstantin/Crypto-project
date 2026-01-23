@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { finalize } from 'rxjs/operators';
 
 interface Card {
   suit: string;
@@ -17,9 +18,9 @@ interface Card {
   styleUrls: ['./card-shuffle.component.scss']
 })
 export class CardShuffleComponent implements OnInit {
-  p = '61';
-  q = '53';
-  seed = '12';
+  p: string | number = '61';
+  q: string | number = '53';
+  seed: string | number = '12';
 
   deck: Card[] = [];
   shuffledDeck: Card[] = [];
@@ -29,6 +30,7 @@ export class CardShuffleComponent implements OnInit {
   isShuffling: boolean = false;
   message: string = '';
   messageType: 'success' | 'error' | 'info' = 'info';
+  isShaking: boolean = false; // Added for the shake effect
 
   private suits = ['♠', '♥', '♦', '♣'];
   private ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
@@ -37,8 +39,26 @@ export class CardShuffleComponent implements OnInit {
     this.initializeDeck();
   }
 
-  ngOnInit(): void {
-    // Initialize component
+  ngOnInit(): void {}
+
+  private isPrime(num: number): boolean {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 === 0 || num % 3 === 0) return false;
+    for (let i = 5; i * i <= num; i += 6) {
+      if (num % i === 0 || num % (i + 2) === 0) return false;
+    }
+    return true;
+  }
+
+  private triggerShake(msg: string): void {
+    this.message = msg;
+    this.messageType = 'error';
+    this.isShaking = true;
+    this.isShuffling = false;
+    setTimeout(() => {
+      this.isShaking = false;
+    }, 500);
   }
 
   private initializeDeck(): void {
@@ -55,47 +75,67 @@ export class CardShuffleComponent implements OnInit {
   }
 
   shuffleDeck(): void {
-    if (!this.p.trim() || !this.q.trim() || !this.seed.trim()) {
-      this.message = '❌ Please enter P, Q, and Seed values';
-      this.messageType = 'error';
+    // 1. Safe parsing of inputs (prevents .trim() crashes)
+    const pStr = String(this.p || '').trim();
+    const qStr = String(this.q || '').trim();
+    const sStr = String(this.seed || '').trim();
+
+    // 2. Immediate resets
+    this.message = '';
+
+    // 3. Validation
+    if (!pStr || !qStr || !sStr) {
+      this.triggerShake('❌ Please enter P, Q, and Seed values');
       return;
     }
 
+    const pVal = Number(pStr);
+    const qVal = Number(qStr);
+
+    if (isNaN(pVal) || isNaN(qVal)) {
+      this.triggerShake('❌ P and Q must be valid numbers.');
+      return;
+    }
+
+    if (!this.isPrime(pVal) || !this.isPrime(qVal)) {
+      this.triggerShake('❌ Security Risk: Both P and Q must be prime numbers');
+      return;
+    }
+
+    // 4. Start Shuffling
     this.isShuffling = true;
     this.message = '🔄 Shuffling deck...';
     this.messageType = 'info';
 
-    // Send shuffle request to backend
-    const request = {
-      p: this.p,
-      q: this.q,
-      seed: this.seed
-    };
+    const request = { p: pStr, q: qStr, seed: sStr };
 
     this.http.post<any>('http://localhost:8080/api/demo/shuffle-deck', request)
+      .pipe(
+        finalize(() => {
+          // Safety reset: if request fails before success block, unlock UI
+          if (this.messageType === 'error') this.isShuffling = false;
+        })
+      )
       .subscribe({
         next: (response) => {
           if (response.success) {
-            // Convert card strings to Card objects
             this.shuffledDeck = response.shuffledDeck.map((cardStr: string) => {
               const suit = cardStr.slice(-1);
               const rank = cardStr.slice(0, -1);
-              return {
-                suit,
-                rank,
-                symbol: cardStr
-              };
+              return { suit, rank, symbol: cardStr };
             });
             this.showShuffledDeck = true;
             this.message = `✅ ${response.message}`;
             this.messageType = 'success';
+          } else {
+            this.triggerShake(`❌ ${response.message || 'Shuffle failed'}`);
           }
           this.isShuffling = false;
         },
-        error: () => {
+        error: (err) => {
           this.isShuffling = false;
-          this.message = '❌ Error shuffling deck';
-          this.messageType = 'error';
+          const errorMsg = err.error?.message || err.message || 'Error connecting to server';
+          this.triggerShake(`❌ ${errorMsg}`);
         }
       });
   }
@@ -105,6 +145,7 @@ export class CardShuffleComponent implements OnInit {
     this.shuffledDeck = [];
     this.showShuffledDeck = false;
     this.message = '';
+    this.isShuffling = false;
   }
 
   changeSeed(): void {
@@ -115,8 +156,7 @@ export class CardShuffleComponent implements OnInit {
 
   drawCards(count: number): Card[] {
     if (this.shuffledDeck.length === 0) {
-      this.message = '❌ Please shuffle the deck first';
-      this.messageType = 'error';
+      this.triggerShake('❌ Please shuffle the deck first');
       return [];
     }
     const drawnCards = this.shuffledDeck.splice(0, count);

@@ -1,5 +1,6 @@
 <div class="tab-card">
   <h2>Encryption Tool</h2>
+
   <form class="form-group" (ngSubmit)="encrypt()">
     <div class="input-wrapper">
       <label for="encrypt-input">Enter Text to Encrypt</label>
@@ -9,6 +10,7 @@
         name="encryptInput"
         placeholder="Type your message here..."
         rows="6"
+        [disabled]="isLoading"
       ></textarea>
     </div>
 
@@ -17,38 +19,20 @@
       <div class="param-row">
         <div class="input-wrapper">
           <label for="encrypt-p">P (Prime)</label>
-          <input
-            id="encrypt-p"
-            type="number"
-            [(ngModel)]="encryptP"
-            name="encryptP"
-            placeholder="e.g., 61"
-          />
+          <input id="encrypt-p" type="number" [(ngModel)]="encryptP" name="encryptP" [disabled]="isLoading" />
         </div>
         <div class="input-wrapper">
           <label for="encrypt-q">Q (Prime)</label>
-          <input
-            id="encrypt-q"
-            type="number"
-            [(ngModel)]="encryptQ"
-            name="encryptQ"
-            placeholder="e.g., 53"
-          />
+          <input id="encrypt-q" type="number" [(ngModel)]="encryptQ" name="encryptQ" [disabled]="isLoading" />
         </div>
         <div class="input-wrapper">
           <label for="encrypt-seed">Seed</label>
-          <input
-            id="encrypt-seed"
-            type="number"
-            [(ngModel)]="encryptSeed"
-            name="encryptSeed"
-            placeholder="e.g., 12"
-          />
+          <input id="encrypt-seed" type="number" [(ngModel)]="encryptSeed" name="encryptSeed" [disabled]="isLoading" />
         </div>
       </div>
     </div>
 
-    <div *ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage" class="error-message" [class.shake-animation]="isShaking">
       {{ errorMessage }}
     </div>
 
@@ -58,22 +42,21 @@
     </button>
   </form>
 
-  <div *ngIf="showResult" class="result-box">
+  <div *ngIf="showResult && !isLoading" class="result-box">
     <h3>Encrypted Result</h3>
     <div class="output-text">{{ encryptResult }}</div>
+
     <div class="result-actions">
-      <button class="btn btn-secondary" (click)="copyToClipboard()">
-        📋 Copy to Clipboard
-      </button>
-      <button class="btn btn-secondary" (click)="toggleSteps()" [disabled]="encryptionSteps.length === 0">
+      <button class="btn btn-secondary" (click)="copyToClipboard()">📋 Copy</button>
+      <button
+        class="btn btn-secondary"
+        (click)="toggleSteps()"
+        [disabled]="encryptionSteps.length === 0">
         {{ showSteps ? '👁️ Hide Steps' : '👁️ Show Steps' }}
       </button>
-      <button class="btn btn-secondary" (click)="clearForm()">
-        🔄 Clear
-      </button>
+      <button class="btn btn-secondary" (click)="clearForm()">🔄 Clear</button>
     </div>
 
-    <!-- Steps Display -->
     <div *ngIf="showSteps && encryptionSteps.length > 0" class="steps-container">
       <h4>BBS Steps</h4>
       <div class="steps-table">
