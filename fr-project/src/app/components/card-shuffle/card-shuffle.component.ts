@@ -110,7 +110,7 @@ export class CardShuffleComponent implements OnInit {
     }
 
     this.isShuffling = true;
-    this.message = '🔄 Shuffling deck...';
+    this.message = 'Shuffling deck...';
     this.messageType = 'info';
 
     const request = { p: pStr, q: qStr, seed: sStr };
@@ -131,7 +131,7 @@ export class CardShuffleComponent implements OnInit {
             });
             this.shuffleSteps = response.steps || [];
             this.showShuffledDeck = true;
-            this.message = `✅ ${response.message}`;
+            this.message = `${response.message}`;
             this.messageType = 'success';
           } else {
             this.triggerShake(`❌ ${response.message || 'Shuffle failed'}`);
