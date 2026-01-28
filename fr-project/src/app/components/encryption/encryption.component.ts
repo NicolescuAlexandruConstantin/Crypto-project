@@ -15,8 +15,8 @@ import { EncryptionResult, EncryptionStep } from '../../models/encryption.model'
 })
 export class EncryptionComponent {
   encryptInput: string = '';
-  encryptP: string = '61';
-  encryptQ: string = '53';
+  encryptP: string = '71';
+  encryptQ: string = '83';
   encryptSeed: string = '12';
   encryptResult: string = '';
   encryptionSteps: EncryptionStep[] = [];
@@ -59,7 +59,7 @@ export class EncryptionComponent {
     const sStr = String(this.encryptSeed).trim();
 
     if (!this.encryptInput.trim() || !pStr || !qStr || !sStr) {
-      this.triggerShake('❌ Please fill in all fields.');
+      this.triggerShake('Please fill in all fields.');
       return;
     }
 
@@ -67,12 +67,12 @@ export class EncryptionComponent {
     const qVal = Number(qStr);
 
     if (isNaN(pVal) || isNaN(qVal)) {
-      this.triggerShake('❌ P and Q must be valid numbers.');
+      this.triggerShake('P and Q must be valid numbers.');
       return;
     }
 
     if (!this.isPrime(pVal) || !this.isPrime(qVal)) {
-      this.triggerShake('❌ Security Risk: Both P and Q must be prime numbers.');
+      this.triggerShake('Security Risk: Both P and Q must be prime numbers.');
       return;
     }
 
@@ -87,7 +87,6 @@ export class EncryptionComponent {
       .subscribe({
         next: (response: EncryptionResult) => {
           this.encryptResult = response.ciphertextHex;
-          // Ensure this line correctly maps 'steps' from your backend response
           this.encryptionSteps = response.steps || [];
           this.showResult = true;
 
@@ -97,7 +96,7 @@ export class EncryptionComponent {
         },
         error: (error) => {
           const errorMsg = error.error?.message || error.message || 'Server Error';
-          this.triggerShake(`❌ Encryption failed: ${errorMsg}`);
+          this.triggerShake(`Encryption failed: ${errorMsg}`);
         }
       });
   }
@@ -105,14 +104,14 @@ export class EncryptionComponent {
   copyToClipboard(): void {
     if (!this.encryptResult) return;
     navigator.clipboard.writeText(this.encryptResult).then(() => {
-      console.log('✅ Copied to clipboard!');
+      console.log('Copied to clipboard!');
     });
   }
 
   clearForm(): void {
     this.encryptInput = '';
-    this.encryptP = '61';
-    this.encryptQ = '53';
+    this.encryptP = '71';
+    this.encryptQ = '83';
     this.encryptSeed = '12';
     this.encryptResult = '';
     this.encryptionSteps = [];

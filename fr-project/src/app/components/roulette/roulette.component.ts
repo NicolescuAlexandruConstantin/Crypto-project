@@ -12,7 +12,7 @@ interface RouletteState {
   balance: number;
   bet: number;
   selectedNumber: number | null;
-  wheelRotation: number; // Added for continuous spinning
+  wheelRotation: number;
 }
 
 @Component({
@@ -34,8 +34,8 @@ export class RouletteComponent implements OnInit {
     wheelRotation: 0
   };
 
-  p: string | number = '61';
-  q: string | number = '53';
+  p: string | number = '71';
+  q: string | number = '83';
   seed: string | number = '12';
 
   message = '';
@@ -75,17 +75,17 @@ export class RouletteComponent implements OnInit {
     const sStr = String(this.seed || '').trim();
 
     if (this.state.bet <= 0 || this.state.bet > this.state.balance) {
-      this.triggerShake('❌ Invalid bet amount!');
+      this.triggerShake('Invalid bet amount!');
       return;
     }
 
     if (this.state.selectedNumber === null) {
-      this.triggerShake('❌ Please select a number first!');
+      this.triggerShake('Please select a number first!');
       return;
     }
 
     if (!pStr || !qStr || !sStr) {
-      this.triggerShake('❌ Please fill in all BBS parameters.');
+      this.triggerShake('Please fill in all BBS parameters.');
       return;
     }
 
@@ -93,12 +93,12 @@ export class RouletteComponent implements OnInit {
     const qVal = Number(qStr);
 
     if (isNaN(pVal) || isNaN(qVal)) {
-      this.triggerShake('❌ P and Q must be valid numbers.');
+      this.triggerShake('P and Q must be valid numbers.');
       return;
     }
 
     if (!this.isPrime(pVal) || !this.isPrime(qVal)) {
-      this.triggerShake('❌ Security Risk: P and Q must be prime!');
+      this.triggerShake('Security Risk: P and Q must be prime!');
       return;
     }
 
@@ -122,7 +122,7 @@ export class RouletteComponent implements OnInit {
         error: (err) => {
           this.state.isSpinning = false;
           const errorMsg = err.error?.message || err.message || 'Server Unreachable';
-          this.triggerShake(`❌ ${errorMsg}`);
+          this.triggerShake(`${errorMsg}`);
         }
       });
   }
@@ -130,11 +130,9 @@ export class RouletteComponent implements OnInit {
   private animateSpin(winningNumber: number): void {
     let stepCount = 0;
     const degreePerSlot = 360 / this.slots;
-    // Standard 3 full rotations + offset to winning number
     const totalSteps = (this.slots * 3) + winningNumber;
 
     const interval = setInterval(() => {
-      // Rotate forward continuously
       this.state.wheelRotation -= degreePerSlot;
       this.state.currentNumber = stepCount % this.slots;
       stepCount++;
@@ -142,7 +140,6 @@ export class RouletteComponent implements OnInit {
       if (stepCount > totalSteps) {
         clearInterval(interval);
 
-        // Ensure final alignment is mathematically perfect to avoid slight shifts
         this.state.currentNumber = winningNumber;
         const currentFullRotations = Math.floor(Math.abs(this.state.wheelRotation) / 360);
         this.state.wheelRotation = -( (winningNumber * degreePerSlot) + (degreePerSlot / 2) + (currentFullRotations * 360) );
@@ -159,11 +156,11 @@ export class RouletteComponent implements OnInit {
     if (isWin) {
       const winnings = this.state.bet * 36;
       this.state.balance += winnings;
-      this.message = `🎉 JACKPOT! It's ${winningNumber}! You won $${winnings}!`;
+      this.message = `JACKPOT! It's ${winningNumber}! You won $${winnings}!`;
       this.messageType = 'success';
     } else {
       this.state.balance -= this.state.bet;
-      this.message = `😔 Result: ${winningNumber}. Lost $${this.state.bet}`;
+      this.message = `Result: ${winningNumber}. Lost $${this.state.bet}`;
       this.messageType = 'error';
     }
   }

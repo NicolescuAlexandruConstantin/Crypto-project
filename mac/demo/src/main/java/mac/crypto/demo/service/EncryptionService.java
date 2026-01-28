@@ -22,11 +22,9 @@ public class EncryptionService {
      * @return EncryptionResult containing ciphertext and encryption steps
      */
     public EncryptionResult encrypt(String input, BigInteger p, BigInteger q, BigInteger seed) {
-        // Initialize the generator with provided parameters
         BlumBlumShubGenerator generator = new BlumBlumShubGenerator();
         generator.initialize(p, q, seed);
 
-        // Convert string to bytes and encrypt
         byte[] inputBytes = input.getBytes();
         StringBuilder encrypted = new StringBuilder();
         List<EncryptionStep> steps = new ArrayList<>();
@@ -36,8 +34,7 @@ public class EncryptionService {
             BigInteger randomNum = generator.nextRandom(8);
             int encryptedByte = (b ^ randomNum.intValue()) & 0xFF;
             encrypted.append(String.format("%02X", encryptedByte));
-            
-            // Create encryption step
+
             EncryptionStep step = new EncryptionStep(
                 i + 1,
                 randomNum.toString(),
@@ -58,11 +55,9 @@ public class EncryptionService {
      * @return EncryptionResult containing decrypted text and decryption steps
      */
     public EncryptionResult decrypt(String encrypted, BigInteger p, BigInteger q, BigInteger seed) {
-        // Initialize the generator with the same parameters used in encryption
         BlumBlumShubGenerator generator = new BlumBlumShubGenerator();
         generator.initialize(p, q, seed);
 
-        // Convert hex string back to bytes
         StringBuilder decrypted = new StringBuilder();
         List<EncryptionStep> steps = new ArrayList<>();
 
@@ -72,8 +67,7 @@ public class EncryptionService {
             BigInteger randomNum = generator.nextRandom(8);
             int decryptedByte = (encryptedByte ^ randomNum.intValue()) & 0xFF;
             decrypted.append((char) decryptedByte);
-            
-            // Create decryption step
+
             EncryptionStep step = new EncryptionStep(
                 i / 2 + 1,
                 randomNum.toString(),
@@ -96,14 +90,12 @@ public class EncryptionService {
     public EncryptionResult generateRouletteSpin(BigInteger p, BigInteger q, BigInteger seed, int slots) {
         BlumBlumShubGenerator generator = new BlumBlumShubGenerator();
         generator.initialize(p, q, seed);
-        
-        // Generate random bits until we get a number in valid range
+
         int bitsNeeded = (int) Math.ceil(Math.log(slots) / Math.log(2));
         List<EncryptionStep> steps = new ArrayList<>();
         BigInteger randomNum = null;
         int result = 0;
-        
-        // Generate bits and track steps
+
         for (int i = 0; i < bitsNeeded; i++) {
             randomNum = generator.nextRandom(1);
             int bit = randomNum.intValue();
@@ -115,12 +107,10 @@ public class EncryptionService {
             );
             steps.add(step);
         }
-        
-        // Generate the final random number
+
         randomNum = generator.nextRandom(bitsNeeded);
         result = randomNum.intValue() % slots;
-        
-        // Create result with ciphertext as the winning number
+
         return new EncryptionResult(String.valueOf(result), steps);
     }
 
@@ -134,8 +124,7 @@ public class EncryptionService {
     public Map<String, Object> shufflePokerDeck(BigInteger p, BigInteger q, BigInteger seed) {
         BlumBlumShubGenerator generator = new BlumBlumShubGenerator();
         generator.initialize(p, q, seed);
-        
-        // Create deck: 52 cards (13 ranks × 4 suits)
+
         String[] suits = {"♠", "♥", "♦", "♣"};
         String[] ranks = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
         
@@ -145,33 +134,30 @@ public class EncryptionService {
                 deck.add(rank + suit);
             }
         }
-        
-        // Fisher-Yates shuffle using BBS random numbers
+
         List<EncryptionStep> steps = new ArrayList<>();
         int stepNum = 0;
         
         for (int i = deck.size() - 1; i > 0; i--) {
-            // Generate random index between 0 and i
             int bitsNeeded = (int) Math.ceil(Math.log(i + 1) / Math.log(2));
             BigInteger randomNum = generator.nextRandom(bitsNeeded);
             int randomIndex = randomNum.intValue() % (i + 1);
-            
-            // Record the shuffle step
-            EncryptionStep step = new EncryptionStep(
-                stepNum + 1,
-                randomNum.toString(),
-                randomIndex
-            );
-            steps.add(step);
-            stepNum++;
-            
-            // Swap cards
-            String temp = deck.get(i);
-            deck.set(i, deck.get(randomIndex));
-            deck.set(randomIndex, temp);
+
+            if (randomIndex != i) {
+                EncryptionStep step = new EncryptionStep(
+                        stepNum + 1,
+                        randomNum.toString(),
+                        randomIndex
+                );
+                steps.add(step);
+                stepNum++;
+
+                String temp = deck.get(i);
+                deck.set(i, deck.get(randomIndex));
+                deck.set(randomIndex, temp);
+            }
         }
-        
-        // Prepare response
+
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("shuffledDeck", deck);

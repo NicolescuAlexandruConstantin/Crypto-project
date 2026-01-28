@@ -10,6 +10,12 @@ interface Card {
   symbol: string;
 }
 
+interface EncryptionStep {
+  n: number;
+  xn: string;
+  bit: number | string;
+}
+
 @Component({
   selector: 'app-card-shuffle',
   standalone: true,
@@ -25,12 +31,15 @@ export class CardShuffleComponent implements OnInit {
   deck: Card[] = [];
   shuffledDeck: Card[] = [];
   drawnHands: Card[][] = [];
+  shuffleSteps: EncryptionStep[] = []; // Added for Audit Trail
+
   showShuffledDeck: boolean = false;
   showHands: boolean = false;
+  showSteps: boolean = false;        // Added for Audit Trail
   isShuffling: boolean = false;
   message: string = '';
   messageType: 'success' | 'error' | 'info' = 'info';
-  isShaking: boolean = false; // Added for the shake effect
+  isShaking: boolean = false;
 
   private suits = ['♠', '♥', '♦', '♣'];
   private ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
@@ -75,15 +84,13 @@ export class CardShuffleComponent implements OnInit {
   }
 
   shuffleDeck(): void {
-    // 1. Safe parsing of inputs (prevents .trim() crashes)
     const pStr = String(this.p || '').trim();
     const qStr = String(this.q || '').trim();
     const sStr = String(this.seed || '').trim();
 
-    // 2. Immediate resets
     this.message = '';
+    this.shuffleSteps = []; // Clear old steps
 
-    // 3. Validation
     if (!pStr || !qStr || !sStr) {
       this.triggerShake('❌ Please enter P, Q, and Seed values');
       return;
@@ -102,7 +109,6 @@ export class CardShuffleComponent implements OnInit {
       return;
     }
 
-    // 4. Start Shuffling
     this.isShuffling = true;
     this.message = '🔄 Shuffling deck...';
     this.messageType = 'info';
@@ -112,7 +118,6 @@ export class CardShuffleComponent implements OnInit {
     this.http.post<any>('http://localhost:8080/api/demo/shuffle-deck', request)
       .pipe(
         finalize(() => {
-          // Safety reset: if request fails before success block, unlock UI
           if (this.messageType === 'error') this.isShuffling = false;
         })
       )
@@ -124,6 +129,7 @@ export class CardShuffleComponent implements OnInit {
               const rank = cardStr.slice(0, -1);
               return { suit, rank, symbol: cardStr };
             });
+            this.shuffleSteps = response.steps || []; // Capture steps from backend
             this.showShuffledDeck = true;
             this.message = `✅ ${response.message}`;
             this.messageType = 'success';
@@ -143,9 +149,15 @@ export class CardShuffleComponent implements OnInit {
   resetDeck(): void {
     this.initializeDeck();
     this.shuffledDeck = [];
+    this.shuffleSteps = [];
     this.showShuffledDeck = false;
+    this.showSteps = false;
     this.message = '';
     this.isShuffling = false;
+  }
+
+  toggleSteps(): void {
+    this.showSteps = !this.showSteps;
   }
 
   changeSeed(): void {

@@ -28,7 +28,6 @@ export class AppComponent implements OnInit {
   constructor(private settingsService: SettingsService) {}
 
   ngOnInit(): void {
-    // Restore active tab from settings
     const savedTab = this.settingsService.getSetting('activeTab');
     if (this.tabs.includes(savedTab)) {
       this.activeTab = savedTab;

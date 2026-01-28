@@ -4,8 +4,7 @@ import java.math.BigInteger;
 
 public class BlumBlumShubGenerator {
 
-    private BigInteger m;  // m = p * q (modulus)
-    private BigInteger seed;
+    private BigInteger m;
     private BigInteger current;
 
     /**
@@ -16,7 +15,6 @@ public class BlumBlumShubGenerator {
      */
     public void initialize(BigInteger p, BigInteger q, BigInteger seed) {
         this.m = p.multiply(q);
-        this.seed = seed;
         this.current = seed.multiply(seed).mod(m);
     }
 
@@ -42,18 +40,4 @@ public class BlumBlumShubGenerator {
         return result;
     }
 
-    /**
-     * Get the current state
-     * @return Current state value
-     */
-    public BigInteger getCurrentState() {
-        return current;
-    }
-
-    /**
-     * Reset to the original seed
-     */
-    public void reset() {
-        current = seed.multiply(seed).mod(m);
-    }
 }

@@ -1,7 +1,3 @@
-/**
- * DTO Models that match the Java backend domain classes
- */
-
 export interface EncryptionStep {
   n: number;
   xn: string;

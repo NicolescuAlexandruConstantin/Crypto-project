@@ -62,11 +62,31 @@
         <div class="draw-buttons">
           <button class="btn btn-tertiary" (click)="drawCards(1)">Draw 1 Card</button>
           <button class="btn btn-tertiary" (click)="drawCards(5)">Draw 5 Cards (Hand)</button>
-          <button class="btn btn-tertiary" (click)="drawCards(7)">Draw 7 Cards</button>
           <button class="btn btn-tertiary" (click)="toggleHands()" [disabled]="drawnHands.length === 0">
             {{ showHands ? '👁️ Hide Hands' : '👁️ Show Hands' }}
           </button>
+
+          <button class="btn btn-secondary" (click)="toggleSteps()" [disabled]="shuffleSteps.length === 0">
+            {{ showSteps ? '👁️ Hide Steps' : '📋 Show Steps' }}
+          </button>
+
           <button class="btn btn-tertiary" (click)="resetDeck()">New Shuffle</button>
+        </div>
+
+        <div *ngIf="showSteps && shuffleSteps.length > 0" class="steps-container">
+          <h4>BBS Steps</h4>
+          <div class="steps-table">
+            <div class="steps-header">
+              <div class="step-col">Swap #</div>
+              <div class="step-col">BBS State (Xn)</div>
+              <div class="step-col">Swap Index</div>
+            </div>
+            <div *ngFor="let step of shuffleSteps" class="steps-row">
+              <div class="step-col">{{ step.n }}</div>
+              <div class="step-col text-truncate">{{ step.xn }}</div>
+              <div class="step-col">{{ step.bit }}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -78,7 +98,6 @@
         <h3>Your Hands ({{ drawnHands.length }} hand{{ drawnHands.length !== 1 ? 's' : '' }})</h3>
         <button class="close-btn" (click)="toggleHands()">✕</button>
       </div>
-
       <div class="hands-content">
         <div class="hands-display">
           <div *ngFor="let hand of drawnHands; let i = index" class="single-hand">
@@ -95,7 +114,6 @@
           </div>
         </div>
       </div>
-
       <div class="hands-footer">
         <button class="btn btn-secondary" (click)="clearHands()">Clear Hand</button>
         <button class="btn btn-primary" (click)="toggleHands()">Close</button>
@@ -108,6 +126,7 @@
     <ul>
       <li>🔐 Uses Blum Blum Shub generator for cryptographically secure shuffling</li>
       <li>🎴 Implements Fisher-Yates shuffle algorithm</li>
+      <li>📋 Each swap is derived directly from the BBS mathematical sequence</li>
     </ul>
   </div>
 </div>

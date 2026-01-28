@@ -124,15 +124,37 @@
 }
 
 .steps-table {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+
   .steps-header, .steps-row {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 12px;
-    padding: 10px;
+    grid-template-columns: 80px 1fr 100px;
+    gap: 15px;
+    padding: 12px;
+    align-items: center;
   }
+
   .steps-header {
     background: var(--primary-color);
     color: white;
-    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .steps-row {
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    &:nth-child(even) { background: rgba(0,0,0,0.02); }
+  }
+
+  .text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

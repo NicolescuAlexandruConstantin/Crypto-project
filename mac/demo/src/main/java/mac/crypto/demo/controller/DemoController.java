@@ -55,7 +55,6 @@ public class DemoController {
         BigInteger seed = new BigInteger(request.get("seed").toString());
         Integer slots = ((Number) request.get("slots")).intValue();
 
-        // Generate random number for roulette using Blum Blum Shub
         EncryptionResult result = encryptionService.generateRouletteSpin(p, q, seed, slots);
         int winningNumber = Integer.parseInt(result.getCiphertextHex());
         logger.info("Roulette spin result: {}", winningNumber);
@@ -76,7 +75,6 @@ public class DemoController {
         BigInteger q = new BigInteger(request.get("q").toString());
         BigInteger seed = new BigInteger(request.get("seed").toString());
 
-        // Shuffle deck using Blum Blum Shub
         Map<String, Object> result = encryptionService.shufflePokerDeck(p, q, seed);
         logger.info("Deck shuffled successfully");
         

@@ -11,9 +11,6 @@ export class CryptoService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Encrypts text using Blum Blum Shub generator via backend
-   */
   encrypt(text: string, p: string, q: string, seed: string): Observable<EncryptionResult> {
     if (!text || !p || !q || !seed) {
       throw new Error('Text, P, Q, and Seed are required');
@@ -29,9 +26,6 @@ export class CryptoService {
     return this.http.post<EncryptionResult>(`${this.apiUrl}/encrypt`, request);
   }
 
-  /**
-   * Decrypts text using Blum Blum Shub generator via backend
-   */
   decrypt(encrypted: string, p: string, q: string, seed: string): Observable<EncryptionResult> {
     if (!encrypted || !p || !q || !seed) {
       throw new Error('Encrypted text, P, Q, and Seed are required');
