@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="40e5d23c-16bb-4584-91df-0384ddfb899f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/mac/crypto/demo/controller/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/mac/crypto/demo/controller/DemoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/mac/crypto/demo/service/EncryptionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/mac/crypto/demo/service/EncryptionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/mac/crypto/demo/utils/BlumBlumShubGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/mac/crypto/demo/utils/BlumBlumShubGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

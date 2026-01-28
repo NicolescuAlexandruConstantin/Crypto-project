@@ -24,18 +24,18 @@ interface EncryptionStep {
   styleUrls: ['./card-shuffle.component.scss']
 })
 export class CardShuffleComponent implements OnInit {
-  p: string | number = '61';
-  q: string | number = '53';
+  p: string | number = '71';
+  q: string | number = '83';
   seed: string | number = '12';
 
   deck: Card[] = [];
   shuffledDeck: Card[] = [];
   drawnHands: Card[][] = [];
-  shuffleSteps: EncryptionStep[] = []; // Added for Audit Trail
+  shuffleSteps: EncryptionStep[] = [];
 
   showShuffledDeck: boolean = false;
   showHands: boolean = false;
-  showSteps: boolean = false;        // Added for Audit Trail
+  showSteps: boolean = false;
   isShuffling: boolean = false;
   message: string = '';
   messageType: 'success' | 'error' | 'info' = 'info';
@@ -89,10 +89,10 @@ export class CardShuffleComponent implements OnInit {
     const sStr = String(this.seed || '').trim();
 
     this.message = '';
-    this.shuffleSteps = []; // Clear old steps
+    this.shuffleSteps = [];
 
     if (!pStr || !qStr || !sStr) {
-      this.triggerShake('❌ Please enter P, Q, and Seed values');
+      this.triggerShake('Please enter P, Q, and Seed values');
       return;
     }
 
@@ -100,12 +100,12 @@ export class CardShuffleComponent implements OnInit {
     const qVal = Number(qStr);
 
     if (isNaN(pVal) || isNaN(qVal)) {
-      this.triggerShake('❌ P and Q must be valid numbers.');
+      this.triggerShake('P and Q must be valid numbers.');
       return;
     }
 
     if (!this.isPrime(pVal) || !this.isPrime(qVal)) {
-      this.triggerShake('❌ Security Risk: Both P and Q must be prime numbers');
+      this.triggerShake('Security Risk: Both P and Q must be prime numbers');
       return;
     }
 
@@ -129,7 +129,7 @@ export class CardShuffleComponent implements OnInit {
               const rank = cardStr.slice(0, -1);
               return { suit, rank, symbol: cardStr };
             });
-            this.shuffleSteps = response.steps || []; // Capture steps from backend
+            this.shuffleSteps = response.steps || [];
             this.showShuffledDeck = true;
             this.message = `✅ ${response.message}`;
             this.messageType = 'success';
