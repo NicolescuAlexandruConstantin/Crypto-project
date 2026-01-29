@@ -108,6 +108,9 @@ public class EncryptionService {
             steps.add(step);
         }
 
+        generator = new BlumBlumShubGenerator();
+        generator.initialize(p, q, seed);
+
         randomNum = generator.nextRandom(bitsNeeded);
         result = randomNum.intValue() % slots;
 
