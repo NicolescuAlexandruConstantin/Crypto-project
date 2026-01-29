@@ -7,29 +7,25 @@
 
       <div class="input-group">
         <label for="p-input">P (Prime)</label>
-        <input type="number" id="p-input" [(ngModel)]="p" [disabled]="isShuffling" placeholder="e.g., 61" />
+        <input type="number" id="p-input" [(ngModel)]="p" [disabled]="isShuffling" placeholder="e.g., 61"/>
       </div>
 
       <div class="input-group">
         <label for="q-input">Q (Prime)</label>
-        <input type="number" id="q-input" [(ngModel)]="q" [disabled]="isShuffling" placeholder="e.g., 53" />
+        <input type="number" id="q-input" [(ngModel)]="q" [disabled]="isShuffling" placeholder="e.g., 53"/>
       </div>
 
       <div class="input-group">
         <label for="seed-input">Seed</label>
-        <input type="number" id="seed-input" [(ngModel)]="seed" [disabled]="isShuffling" placeholder="e.g., 12" />
+        <input type="number" id="seed-input" [(ngModel)]="seed" [disabled]="isShuffling" placeholder="e.g., 12"/>
       </div>
 
       <div class="button-group">
         <button class="btn btn-primary" (click)="shuffleDeck()" [disabled]="isShuffling">
           {{ isShuffling ? '🔄 Shuffling...' : '🔀 Shuffle Deck' }}
         </button>
-        <button class="btn btn-secondary" (click)="changeSeed()" [disabled]="isShuffling">
-          🎲 Random Seed
-        </button>
-        <button class="btn btn-secondary" (click)="resetDeck()" [disabled]="isShuffling">
-          ↺ Reset Deck
-        </button>
+        <button class="btn btn-secondary" (click)="changeSeed()" [disabled]="isShuffling">🎲 Random Seed</button>
+        <button class="btn btn-secondary" (click)="resetDeck()" [disabled]="isShuffling">↺ Reset Deck</button>
       </div>
 
       <div *ngIf="message" class="message" [ngClass]="'message-' + messageType" [class.shake-animation]="isShaking">
@@ -65,11 +61,9 @@
           <button class="btn btn-tertiary" (click)="toggleHands()" [disabled]="drawnHands.length === 0">
             {{ showHands ? '👁️ Hide Hands' : '👁️ Show Hands' }}
           </button>
-
           <button class="btn btn-secondary" (click)="toggleSteps()" [disabled]="shuffleSteps.length === 0">
             {{ showSteps ? '👁️ Hide Steps' : '📋 Show Steps' }}
           </button>
-
           <button class="btn btn-tertiary" (click)="resetDeck()">New Shuffle</button>
         </div>
 
@@ -79,7 +73,7 @@
             <div class="steps-header">
               <div class="step-col">Swap #</div>
               <div class="step-col">BBS State (Xn)</div>
-              <div class="step-col">Swap Index</div>
+              <div class="step-col">Index</div>
             </div>
             <div *ngFor="let step of shuffleSteps" class="steps-row">
               <div class="step-col">{{ step.n }}</div>
@@ -95,19 +89,20 @@
   <div *ngIf="showHands" class="hands-modal-overlay" (click)="toggleHands()">
     <div class="hands-modal" (click)="$event.stopPropagation()">
       <div class="hands-header">
-        <h3>Your Hands ({{ drawnHands.length }} hand{{ drawnHands.length !== 1 ? 's' : '' }})</h3>
+        <h3>Drawn Hands</h3>
         <button class="close-btn" (click)="toggleHands()">✕</button>
       </div>
       <div class="hands-content">
         <div class="hands-display">
           <div *ngFor="let hand of drawnHands; let i = index" class="single-hand">
-            <div class="hand-label">Hand {{ i + 1 }} ({{ hand.length }} cards)</div>
+            <div class="hand-label">Hand {{ i + 1 }}</div>
             <div class="hands-cards">
               <div *ngFor="let card of hand" class="hand-card">
                 <div class="hand-card-face">
-                  <span class="hand-card-symbol" [ngClass]="'suit-' + (card.suit === '♥' || card.suit === '♦' ? 'red' : 'black')">
-                    {{ card.symbol }}
-                  </span>
+                <span class="hand-card-symbol"
+                      [ngClass]="'suit-' + (card.suit === '♥' || card.suit === '♦' ? 'red' : 'black')">
+                  {{ card.symbol }}
+                </span>
                 </div>
               </div>
             </div>
@@ -115,7 +110,7 @@
         </div>
       </div>
       <div class="hands-footer">
-        <button class="btn btn-secondary" (click)="clearHands()">Clear Hand</button>
+        <button class="btn btn-secondary" (click)="clearHands()">Clear All</button>
         <button class="btn btn-primary" (click)="toggleHands()">Close</button>
       </div>
     </div>

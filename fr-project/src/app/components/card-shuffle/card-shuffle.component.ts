@@ -65,20 +65,14 @@ export class CardShuffleComponent implements OnInit {
     this.messageType = 'error';
     this.isShaking = true;
     this.isShuffling = false;
-    setTimeout(() => {
-      this.isShaking = false;
-    }, 500);
+    setTimeout(() => { this.isShaking = false; }, 500);
   }
 
   private initializeDeck(): void {
     this.deck = [];
     for (const suit of this.suits) {
       for (const rank of this.ranks) {
-        this.deck.push({
-          suit,
-          rank,
-          symbol: `${rank}${suit}`
-        });
+        this.deck.push({ suit, rank, symbol: `${rank}${suit}` });
       }
     }
   }
@@ -113,14 +107,8 @@ export class CardShuffleComponent implements OnInit {
     this.message = 'Shuffling deck...';
     this.messageType = 'info';
 
-    const request = { p: pStr, q: qStr, seed: sStr };
-
-    this.http.post<any>('http://localhost:8080/api/demo/shuffle-deck', request)
-      .pipe(
-        finalize(() => {
-          if (this.messageType === 'error') this.isShuffling = false;
-        })
-      )
+    this.http.post<any>('http://localhost:8080/api/demo/shuffle-deck', { p: pStr, q: qStr, seed: sStr })
+      .pipe(finalize(() => { if (this.messageType === 'error') this.isShuffling = false; }))
       .subscribe({
         next: (response) => {
           if (response.success) {
@@ -134,14 +122,13 @@ export class CardShuffleComponent implements OnInit {
             this.message = `${response.message}`;
             this.messageType = 'success';
           } else {
-            this.triggerShake(`❌ ${response.message || 'Shuffle failed'}`);
+            this.triggerShake(`${response.message || 'Shuffle failed'}`);
           }
           this.isShuffling = false;
         },
         error: (err) => {
           this.isShuffling = false;
-          const errorMsg = err.error?.message || err.message || 'Error connecting to server';
-          this.triggerShake(`❌ ${errorMsg}`);
+          this.triggerShake(`Error connecting to server`);
         }
       });
   }
@@ -150,41 +137,29 @@ export class CardShuffleComponent implements OnInit {
     this.initializeDeck();
     this.shuffledDeck = [];
     this.shuffleSteps = [];
+    this.drawnHands = [];
     this.showShuffledDeck = false;
     this.showSteps = false;
+    this.showHands = false;
     this.message = '';
     this.isShuffling = false;
   }
 
-  toggleSteps(): void {
-    this.showSteps = !this.showSteps;
-  }
-
-  changeSeed(): void {
-    this.seed = Math.floor(Math.random() * 1000).toString();
-    this.message = `Seed changed to ${this.seed}`;
-    this.messageType = 'info';
-  }
+  toggleSteps(): void { this.showSteps = !this.showSteps; }
+  toggleHands(): void { this.showHands = !this.showHands; }
+  clearHands(): void { this.drawnHands = []; this.showHands = false; }
+  changeSeed(): void { this.seed = Math.floor(Math.random() * 10000).toString(); }
 
   drawCards(count: number): Card[] {
-    if (this.shuffledDeck.length === 0) {
-      this.triggerShake('❌ Please shuffle the deck first');
+    if (this.shuffledDeck.length < count) {
+      this.triggerShake('Not enough cards left in the deck');
       return [];
     }
     const drawnCards = this.shuffledDeck.splice(0, count);
     this.drawnHands.push([...drawnCards]);
     this.showHands = true;
-    this.message = `✅ Drew ${drawnCards.length} card${drawnCards.length > 1 ? 's' : ''}`;
+    this.message = `Drew ${drawnCards.length} card${drawnCards.length > 1 ? 's' : ''}`;
     this.messageType = 'success';
     return drawnCards;
-  }
-
-  toggleHands(): void {
-    this.showHands = !this.showHands;
-  }
-
-  clearHands(): void {
-    this.drawnHands = [];
-    this.showHands = false;
   }
 }

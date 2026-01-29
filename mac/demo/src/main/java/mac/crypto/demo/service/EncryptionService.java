@@ -140,8 +140,13 @@ public class EncryptionService {
         
         for (int i = deck.size() - 1; i > 0; i--) {
             int bitsNeeded = (int) Math.ceil(Math.log(i + 1) / Math.log(2));
-            BigInteger randomNum = generator.nextRandom(bitsNeeded);
-            int randomIndex = randomNum.intValue() % (i + 1);
+            BigInteger randomNum;
+            int randomIndex;
+
+            do {
+                randomNum = generator.nextRandom(bitsNeeded);
+                randomIndex = randomNum.intValue();
+            } while (randomIndex > i);
 
             if (randomIndex != i) {
                 EncryptionStep step = new EncryptionStep(
